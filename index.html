@@ -849,7 +849,7 @@
   }
   .upload-grid-extra{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:10px;
     margin-top:10px;
   }
@@ -1066,9 +1066,11 @@
   }
   .save-image-bar{
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
+    flex-wrap:wrap;
     align-items:center;
-    gap:6px;
+    justify-content:center;
+    gap:10px;
     margin-top:16px;
   }
   .save-image-main-btn{
@@ -1085,7 +1087,105 @@
     box-shadow:0 3px 10px rgba(24,83,79,0.18);
   }
   .save-image-main-btn:hover{background:var(--teal);}
-  .save-image-status{font-size:10.5px; font-weight:700; color:var(--ok);}
+  .save-history-btn{background:var(--tan);}
+  .save-history-btn:hover{background:#c9701c;}
+  .save-image-status{font-size:10.5px; font-weight:700; color:var(--ok); width:100%; text-align:center;}
+
+  /* Bandeau "mode historique" */
+  .history-banner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--yellow);
+    border:1px solid #f0c98a;
+    border-radius:10px;
+    padding:10px 16px;
+    margin-top:12px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--teal-dark);
+  }
+  .history-banner button{
+    background:var(--teal-dark);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-family:inherit;
+    font-weight:700;
+    font-size:11px;
+    padding:7px 12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  /* Panneau Historique de sauvegarde */
+  .history-list{padding:6px;}
+  .history-date-group{margin-bottom:4px;}
+  .history-date-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--mint);
+    padding:9px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:800;
+    font-size:12.5px;
+    color:var(--teal-dark);
+  }
+  .history-date-header:hover{background:#e2ede9;}
+  .history-hours{padding:4px 4px 8px 12px; display:none;}
+  .history-hours.open{display:block;}
+  .history-hour-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:7px 10px;
+    border-bottom:1px solid var(--line);
+    font-size:11.5px;
+  }
+  .history-hour-row:last-child{border-bottom:none;}
+  .history-view-btn, .history-del-btn{
+    border:none;
+    border-radius:6px;
+    font-family:inherit;
+    font-weight:700;
+    font-size:10.5px;
+    padding:5px 10px;
+    cursor:pointer;
+    margin-left:6px;
+  }
+  .history-view-btn{background:var(--teal-dark); color:#fff;}
+  .history-del-btn{background:#fdecea; color:#a13a2e;}
+  .history-empty{padding:24px; text-align:center; color:#9fb3c8; font-style:italic; font-size:12.5px;}
+
+  /* Graphiques de tendance (Historique) */
+  .trend-section h2{border-bottom-color:var(--tan);}
+  .trend-filter-bar{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;}
+  .trend-filter-btn{
+    background:var(--mint);
+    border:1px solid var(--line);
+    color:var(--teal-dark);
+    font-family:inherit;
+    font-weight:700;
+    font-size:10.5px;
+    padding:6px 12px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .trend-filter-btn.active{background:var(--teal-dark); color:#fff; border-color:var(--teal-dark);}
+  .trend-charts-row{display:block;}
+  .trend-chart-col{margin-bottom:14px;}
+  @media (min-width:1100px){
+    .trend-charts-row{display:flex; gap:16px; align-items:flex-start;}
+    .trend-chart-col{flex:1; min-width:0; margin-bottom:0;}
+  }
+  .trend-chart-title{font-size:11px; font-weight:800; color:var(--tan); letter-spacing:.06em; text-transform:uppercase; margin:0 0 8px;}
+  .trend-legend{display:flex; gap:14px; margin-bottom:6px; font-size:10.5px; font-weight:700;}
+  .trend-legend span{display:inline-flex; align-items:center; gap:4px;}
+  .trend-legend .dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+  .trend-empty{padding:30px 10px; text-align:center; color:#9fb3c8; font-style:italic; font-size:12px;}
 
   /* Responsive */
   @media (max-width:640px){
@@ -1345,11 +1445,18 @@
 
   <p class="footer-note">Généré automatiquement · ADM Value pour Vestiaire Collective</p>
 
-  <!-- Bouton Sauvegarder (image JPG) : capture uniquement #captureRegion
-       (barre de titre → Analyse opérationnelle), jamais ce bouton lui-même -->
+  <!-- Boutons Sauvegarder : image JPG + historique -->
   <div class="save-image-bar">
     <button class="save-image-main-btn" id="btnSaveImageBottom">📷 Sauvegarder en image (JPG)</button>
+    <button class="save-image-main-btn save-history-btn" id="btnSaveHistory">🕘 Sauvegarder dans l'historique</button>
     <span class="save-image-status" id="status-SAVE"></span>
+    <span class="save-image-status" id="status-SAVEHISTORY"></span>
+  </div>
+
+  <!-- Bandeau affiché lorsqu'on consulte une entrée de l'historique -->
+  <div class="history-banner" id="historyBanner" style="display:none;">
+    <span id="historyBannerText"></span>
+    <button id="historyBannerExit">✕ Revenir aux données actuelles</button>
   </div>
 
 </div> <!-- /tab1 -->
@@ -1364,6 +1471,36 @@
     </div>
     <div class="upload-grid-extra" id="uploadGridExtra">
       <!-- Équipe, H. Entrée + Sauvegarde image, généré en JS -->
+    </div>
+  </section>
+
+  <!-- 7. HISTORIQUE : courbes de tendance FRT/NRT/ACR (FR et EN) -->
+  <section class="section trend-section">
+    <h2>Historique <small>FRT · NRT · ACR</small></h2>
+    <div class="trend-filter-bar" id="trendFilterBar">
+      <button class="trend-filter-btn active" data-range="week">Semaine en cours</button>
+      <button class="trend-filter-btn" data-range="7days">7 derniers jours</button>
+      <button class="trend-filter-btn" data-range="month">Mois en cours</button>
+    </div>
+    <div class="trend-charts-row">
+      <div class="trend-chart-col">
+        <p class="trend-chart-title">FR</p>
+        <div class="trend-legend">
+          <span><i class="dot" style="background:#2E7DD6"></i>FRT</span>
+          <span><i class="dot" style="background:#E8830B"></i>NRT</span>
+          <span><i class="dot" style="background:#1c8a52"></i>ACR</span>
+        </div>
+        <div id="trendChartFR"></div>
+      </div>
+      <div class="trend-chart-col">
+        <p class="trend-chart-title">EN</p>
+        <div class="trend-legend">
+          <span><i class="dot" style="background:#2E7DD6"></i>FRT</span>
+          <span><i class="dot" style="background:#E8830B"></i>NRT</span>
+          <span><i class="dot" style="background:#1c8a52"></i>ACR</span>
+        </div>
+        <div id="trendChartEN"></div>
+      </div>
     </div>
   </section>
 
@@ -1422,6 +1559,17 @@
   </div>
 </div>
 
+<!-- Modale Historique de sauvegarde (onglet 2) -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Historique de sauvegarde</h3>
+      <button class="modal-close" id="historyModalClose">✕</button>
+    </div>
+    <div class="modal-body history-list" id="historyModalBody"></div>
+  </div>
+</div>
+
 <script>
 /* =========================================================================
    DONNÉES DE CORRESPONDANCE AGENT -> EQUIPE / LANGUE
@@ -1470,6 +1618,383 @@ let DATE_FILTER = null; // "AAAA-MM-JJ" ou null = pas de filtre (toutes les date
 // Renvoie la liste filtrée par DATE_FILTER si actif, sinon la liste complète
 function fd(list){
   return DATE_FILTER ? list.filter(x=>x.date===DATE_FILTER) : list;
+}
+
+/* =========================================================================
+   HISTORIQUE DE SAUVEGARDE — persistance via localStorage (ce fichier est
+   déployé comme site web autonome, sans backend). Un snapshot est enregistré
+   par date + tranche horaire (upload prévu toutes les 2h), afin de suivre
+   l'évolution des KPI dans le temps.
+   ========================================================================= */
+const HISTORY_KEY = "cr_production_history_v1";
+
+function todayStr(){
+  const n = new Date();
+  return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0");
+}
+function activeDateStr(){
+  if(REPORT_DATE_OVERRIDE){
+    const y = REPORT_DATE_OVERRIDE.getFullYear(), m = REPORT_DATE_OVERRIDE.getMonth()+1, d = REPORT_DATE_OVERRIDE.getDate();
+    return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+  }
+  return todayStr();
+}
+function loadHistoryStore(){
+  try{
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function saveHistoryStoreToDisk(store){
+  try{
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(store));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+// Enregistre un instantané des données actuellement chargées (ACR/FRT/NRT/DMT/PROD)
+// pour la date et l'heure actives, afin de suivre l'évolution des KPI.
+function saveToHistory(){
+  const statusEl = document.getElementById("status-SAVEHISTORY");
+  const dateStr = activeDateStr();
+  const hourStr = String(REPORT_TIME_OVERRIDE!==null ? REPORT_TIME_OVERRIDE : new Date().getHours()).padStart(2,"0");
+
+  const store = loadHistoryStore();
+  if(!store[dateStr]) store[dateStr] = {};
+  store[dateStr][hourStr] = {
+    savedAt: new Date().toISOString(),
+    acr: STATE.ACR, frt: STATE.FRT, nrt: STATE.NRT, dmt: STATE.DMT, prod: STATE.PROD
+  };
+  const ok = saveHistoryStoreToDisk(store);
+  if(statusEl) statusEl.textContent = ok ? "✓ Enregistré ("+hourStr+"H)" : "Erreur (stockage plein ?)";
+}
+
+/* -------------------------------------------------------------------------
+   PANNEAU "HISTORIQUE DE SAUVEGARDE" — liste des instantanés enregistrés,
+   groupés par date, avec action "Consulter" par tranche horaire.
+   ------------------------------------------------------------------------- */
+function openHistoryPanel(){
+  renderHistoryList();
+  document.getElementById("historyModal").classList.add("open");
+}
+function closeHistoryPanel(){
+  document.getElementById("historyModal").classList.remove("open");
+}
+
+function renderHistoryList(){
+  const body = document.getElementById("historyModalBody");
+  const store = loadHistoryStore();
+  const dates = Object.keys(store).sort().reverse();
+
+  if(!dates.length){
+    body.innerHTML = '<div class="history-empty">Aucune sauvegarde enregistrée pour le moment.<br>Utilisez le bouton "Sauvegarder dans l\'historique" (onglet 1) après chaque upload.</div>';
+    return;
+  }
+
+  let html = "";
+  dates.forEach(d=>{
+    const [y,m,day] = d.split("-");
+    const hours = Object.keys(store[d]).sort();
+    html += '<div class="history-date-group">';
+    html += '<div class="history-date-header" data-date="'+d+'">'+day+"/"+m+"/"+y+' <span>'+hours.length+' sauvegarde(s) ▾</span></div>';
+    html += '<div class="history-hours" data-date-hours="'+d+'">';
+    hours.forEach(h=>{
+      html += '<div class="history-hour-row">'+
+        '<span>'+h+'H</span>'+
+        '<span><button class="history-view-btn" data-date="'+d+'" data-hour="'+h+'">Consulter</button>'+
+        '<button class="history-del-btn" data-date="'+d+'" data-hour="'+h+'">🗑</button></span>'+
+      '</div>';
+    });
+    html += '</div></div>';
+  });
+  body.innerHTML = html;
+
+  body.querySelectorAll(".history-date-header").forEach(h=>{
+    h.addEventListener("click", ()=>{
+      const panel = body.querySelector('.history-hours[data-date-hours="'+h.dataset.date+'"]');
+      panel.classList.toggle("open");
+    });
+  });
+  body.querySelectorAll(".history-view-btn").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      viewHistoryEntry(btn.dataset.date, btn.dataset.hour);
+      closeHistoryPanel();
+    });
+  });
+  body.querySelectorAll(".history-del-btn").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const store = loadHistoryStore();
+      if(store[btn.dataset.date]){
+        delete store[btn.dataset.date][btn.dataset.hour];
+        if(!Object.keys(store[btn.dataset.date]).length) delete store[btn.dataset.date];
+        saveHistoryStoreToDisk(store);
+      }
+      renderHistoryList();
+    });
+  });
+}
+
+/* -------------------------------------------------------------------------
+   MODE CONSULTATION HISTORIQUE — bascule l'ensemble de l'outil (onglet 1,
+   Détail par agent, Créneaux horaires) sur les données d'un instantané
+   sauvegardé, en gardant une copie des données "en direct" pour pouvoir
+   revenir dessus.
+   ------------------------------------------------------------------------- */
+let HISTORY_VIEW = null; // null = données en direct ; sinon {date, hour}
+let LIVE_STATE_BACKUP = null;
+
+function viewHistoryEntry(dateStr, hourStr){
+  const store = loadHistoryStore();
+  const entry = store[dateStr] && store[dateStr][hourStr];
+  if(!entry) return;
+
+  if(!LIVE_STATE_BACKUP){
+    // Sauvegarde des données en direct la toute première fois qu'on entre en mode historique
+    LIVE_STATE_BACKUP = { acr:STATE.ACR, frt:STATE.FRT, nrt:STATE.NRT, dmt:STATE.DMT, prod:STATE.PROD };
+  }
+
+  // Si on consulte un jour différent d'aujourd'hui, on charge le DERNIER instantané de ce jour
+  // (les autres sections que la courbe reflètent toujours "les dernières valeurs uploadées")
+  const isToday = dateStr === todayStr();
+  let dataToLoad = entry;
+  if(!isToday){
+    const hoursOfDay = Object.keys(store[dateStr]).sort();
+    const lastHour = hoursOfDay[hoursOfDay.length-1];
+    dataToLoad = store[dateStr][lastHour];
+  }
+
+  STATE.ACR = dataToLoad.acr; STATE.FRT = dataToLoad.frt; STATE.NRT = dataToLoad.nrt;
+  STATE.DMT = dataToLoad.dmt; STATE.PROD = dataToLoad.prod;
+
+  HISTORY_VIEW = {date:dateStr, hour:hourStr, isToday:isToday};
+
+  const [y,m,day] = dateStr.split("-");
+  const banner = document.getElementById("historyBanner");
+  const bannerText = document.getElementById("historyBannerText");
+  bannerText.textContent = "🕘 Vous consultez l'historique du "+day+"/"+m+"/"+y+(isToday? " à "+hourStr+"H" : " (dernières valeurs uploadées ce jour-là)");
+  banner.style.display = "flex";
+
+  computeAll();
+}
+
+function exitHistoryView(){
+  if(LIVE_STATE_BACKUP){
+    STATE.ACR = LIVE_STATE_BACKUP.acr; STATE.FRT = LIVE_STATE_BACKUP.frt; STATE.NRT = LIVE_STATE_BACKUP.nrt;
+    STATE.DMT = LIVE_STATE_BACKUP.dmt; STATE.PROD = LIVE_STATE_BACKUP.prod;
+    LIVE_STATE_BACKUP = null;
+  }
+  HISTORY_VIEW = null;
+  document.getElementById("historyBanner").style.display = "none";
+  computeAll();
+}
+
+/* -------------------------------------------------------------------------
+   COURBES DE TENDANCE (FRT / NRT / ACR) — FR et EN, au-dessus de Détail par
+   agent. Axe horizontal :
+     - heures (00H,02H,...) si on consulte aujourd'hui dans l'historique
+     - dates si on consulte un autre jour (plage choisie via le filtre)
+     - semaines (S37, S38...) si la plage "mois en cours" est choisie
+   ------------------------------------------------------------------------- */
+let TREND_RANGE = "week"; // "week" | "7days" | "month"
+
+function isoWeekNumber(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = (d.getUTCDay()+6)%7;
+  d.setUTCDate(d.getUTCDate()-dayNum+3);
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(),0,4));
+  const week = 1 + Math.round(((d-firstThursday)/86400000 - 3 + ((firstThursday.getUTCDay()+6)%7))/7);
+  return week;
+}
+
+function computeTrendData(){
+  const store = loadHistoryStore();
+
+  // ---- Mode "aujourd'hui" : axe des heures, tranches de 2h à partir de 8h ----
+  if(HISTORY_VIEW && HISTORY_VIEW.isToday){
+    const dayData = store[HISTORY_VIEW.date] || {};
+    const hours = ["08","10","12","14","16","18","20","22"];
+    return hours.map(h=>{
+      const snap = dayData[h];
+      return { label:h+"H", ...aggFromSnapshot(snap) };
+    });
+  }
+
+  // ---- Mode "autre jour" ou pas d'historique consulté : plage de jours/semaines ----
+  const today = HISTORY_VIEW ? new Date(HISTORY_VIEW.date) : new Date();
+  let days = [];
+  if(TREND_RANGE==="week"){
+    const dow = (today.getDay()+6)%7; // lundi=0
+    const monday = new Date(today); monday.setDate(today.getDate()-dow);
+    for(let i=0;i<7;i++){ const d=new Date(monday); d.setDate(monday.getDate()+i); days.push(d); }
+  } else if(TREND_RANGE==="7days"){
+    for(let i=6;i>=0;i--){ const d=new Date(today); d.setDate(today.getDate()-i); days.push(d); }
+  } else { // month
+    const first = new Date(today.getFullYear(), today.getMonth(), 1);
+    const last = new Date(today.getFullYear(), today.getMonth()+1, 0);
+    for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)) days.push(new Date(d));
+  }
+
+  function dstr(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+
+  if(TREND_RANGE==="month"){
+    // Regroupement par semaine (S37, S38...)
+    const byWeek = {};
+    days.forEach(d=>{
+      const ds = dstr(d);
+      const dayData = store[ds];
+      if(!dayData) return;
+      const hoursOfDay = Object.keys(dayData).sort();
+      const lastHour = hoursOfDay[hoursOfDay.length-1];
+      const snap = dayData[lastHour];
+      const wk = "S"+isoWeekNumber(d);
+      if(!byWeek[wk]) byWeek[wk] = [];
+      byWeek[wk].push(snap);
+    });
+    return Object.keys(byWeek).map(wk=>{
+      const merged = mergeSnapshots(byWeek[wk]);
+      return { label:wk, ...aggFromSnapshot(merged) };
+    });
+  }
+
+  return days.map(d=>{
+    const ds = dstr(d);
+    const dayData = store[ds];
+    let snap = null;
+    if(dayData){
+      const hoursOfDay = Object.keys(dayData).sort();
+      snap = dayData[hoursOfDay[hoursOfDay.length-1]];
+    }
+    const [,m,day] = ds.split("-");
+    return { label:day+"/"+m, ...aggFromSnapshot(snap) };
+  });
+}
+
+function mergeSnapshots(snaps){
+  const merged = {acr:[],frt:[],nrt:[],dmt:[],prod:[]};
+  snaps.forEach(s=>{
+    if(!s) return;
+    merged.acr = merged.acr.concat(s.acr||[]);
+    merged.frt = merged.frt.concat(s.frt||[]);
+    merged.nrt = merged.nrt.concat(s.nrt||[]);
+    merged.dmt = merged.dmt.concat(s.dmt||[]);
+    merged.prod = merged.prod.concat(s.prod||[]);
+  });
+  return merged;
+}
+
+function aggFromSnapshot(snap){
+  if(!snap) return {fr:{frt:null,nrt:null,acr:null}, en:{frt:null,nrt:null,acr:null}};
+  function avgLang(list, lang){
+    const vals = (list||[]).filter(x=>x.lang===lang).map(x=>x.value);
+    return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+  }
+  return {
+    fr: {frt:avgLang(snap.frt,"FR"), nrt:avgLang(snap.nrt,"FR"), acr:avgLang(snap.acr,"FR")},
+    en: {frt:avgLang(snap.frt,"EN"), nrt:avgLang(snap.nrt,"EN"), acr:avgLang(snap.acr,"EN")}
+  };
+}
+
+function renderTrendCharts(){
+  const data = computeTrendData();
+  renderTrendChart("trendChartFR", data, "fr");
+  renderTrendChart("trendChartEN", data, "en");
+}
+
+// Petit graphique en courbes SVG "maison" (pas de dépendance externe) :
+// 3 lignes (FRT bleu, NRT orange, ACR vert), axe Y 0-100%, axe X = labels fournis.
+function renderTrendChart(containerId, data, langKey){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+
+  const points = data.map(d=>({label:d.label, frt:d[langKey].frt, nrt:d[langKey].nrt, acr:d[langKey].acr}));
+  const hasAny = points.some(p=>p.frt!==null||p.nrt!==null||p.acr!==null);
+  if(!hasAny){
+    el.innerHTML = '<div class="trend-empty">Aucune donnée d\'historique pour cette période. Sauvegardez régulièrement via le bouton "Sauvegarder dans l\'historique" (onglet 1).</div>';
+    return;
+  }
+
+  const W = 560, H = 220, padL = 34, padR = 10, padT = 10, padB = 26;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const n = points.length;
+  const xStep = n>1 ? plotW/(n-1) : 0;
+
+  function x(i){ return padL + i*xStep; }
+  function y(v){ return padT + plotH - (v*plotH); } // v en fraction 0-1
+
+  function buildPath(key, color){
+    let d = "";
+    let started = false;
+    points.forEach((p,i)=>{
+      const v = p[key];
+      if(v===null||v===undefined){ started=false; return; }
+      const cmd = started ? "L" : "M";
+      d += cmd+" "+x(i).toFixed(1)+" "+y(v).toFixed(1)+" ";
+      started = true;
+    });
+    return d.trim();
+  }
+
+  // Grille horizontale (0/25/50/75/100%) + repères Y
+  let gridHtml = "";
+  [0,0.25,0.5,0.75,1].forEach(v=>{
+    const yy = y(v);
+    gridHtml += '<line x1="'+padL+'" y1="'+yy+'" x2="'+(W-padR)+'" y2="'+yy+'" stroke="#E3E8F2" stroke-width="1"/>';
+    gridHtml += '<text x="'+(padL-6)+'" y="'+(yy+3)+'" font-size="8" fill="#8aa39f" text-anchor="end">'+Math.round(v*100)+'%</text>';
+  });
+
+  // Repères X (labels), espacés pour éviter la surcharge si trop nombreux
+  let xLabelsHtml = "";
+  const labelStep = n>8 ? Math.ceil(n/8) : 1;
+  points.forEach((p,i)=>{
+    if(i%labelStep!==0 && i!==n-1) return;
+    xLabelsHtml += '<text x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" font-size="8" fill="#8aa39f" text-anchor="middle">'+p.label+'</text>';
+  });
+
+  function dotsHtml(key, color){
+    let s = "";
+    points.forEach((p,i)=>{
+      const v = p[key];
+      if(v===null||v===undefined) return;
+      s += '<circle cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="'+color+'"/>';
+    });
+    return s;
+  }
+
+  const svg =
+    '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:'+W+'px; display:block;">'+
+      gridHtml+
+      '<path d="'+buildPath("frt")+'" fill="none" stroke="#2E7DD6" stroke-width="2"/>'+
+      '<path d="'+buildPath("nrt")+'" fill="none" stroke="#E8830B" stroke-width="2"/>'+
+      '<path d="'+buildPath("acr")+'" fill="none" stroke="#1c8a52" stroke-width="2"/>'+
+      dotsHtml("frt","#2E7DD6")+dotsHtml("nrt","#E8830B")+dotsHtml("acr","#1c8a52")+
+      xLabelsHtml+
+    '</svg>';
+
+  el.innerHTML = svg;
+}
+
+function bindTrendFilters(){
+  document.querySelectorAll(".trend-filter-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".trend-filter-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      TREND_RANGE = btn.dataset.range;
+      renderTrendCharts();
+    });
+  });
+}
+
+function bindHistoryModal(){
+  document.getElementById("historyModalClose").addEventListener("click", closeHistoryPanel);
+  document.getElementById("historyModal").addEventListener("click", (e)=>{
+    if(e.target.id==="historyModal") closeHistoryPanel();
+  });
+  document.getElementById("historyBannerExit").addEventListener("click", exitHistoryView);
+  document.getElementById("btnSaveHistory").addEventListener("click", saveToHistory);
 }
 
 
@@ -1846,6 +2371,9 @@ function computeAll(){
 
   // ---- Créneaux horaires (FRT / NRT, 00h-23h) ----
   renderSlotTables();
+
+  // ---- Historique : courbes de tendance FRT/NRT/ACR ----
+  renderTrendCharts();
 
   // ---- Bilan à chaud ----
   renderBilan();
@@ -2516,6 +3044,20 @@ function buildUploadGrid(){
   const extra = document.getElementById("uploadGridExtra");
   extra.innerHTML = "";
   BUTTONS_EXTRA.forEach(b=> extra.appendChild(makeEditorButton(b)));
+  extra.appendChild(makeHistoryButton());
+}
+
+function makeHistoryButton(){
+  const div = document.createElement("div");
+  div.className = "upload-btn";
+  div.id = "btn-HISTORY";
+  div.innerHTML =
+    '<div class="u-icon">🕘</div>'+
+    '<div class="u-title">HISTORIQUE</div>'+
+    '<div class="u-sub">Historique de sauvegarde</div>'+
+    '<div class="u-status" id="status-HISTORYBTN"></div>';
+  div.addEventListener("click", openHistoryPanel);
+  return div;
 }
 
 function makeUploadButton(b){
@@ -2984,6 +3526,8 @@ document.addEventListener("DOMContentLoaded", function(){
   bindTabs();
   bindEditorModal();
   bindDateFilterModal();
+  bindHistoryModal();
+  bindTrendFilters();
   document.getElementById("btnSaveImageBottom").addEventListener("click", saveAsImage);
   setInterval(renderDateTime, 60000);
 });
